@@ -105,7 +105,7 @@ class MenuFormLinkController extends MenuFormController {
 
         $form['links'][$id]['root'][] = array();
 
-        if ($form['links'][$id]['#item']->hasChildren) {
+        if ($form['links'][$id]['#item']->hasChildren || $this->menuLinkHasChildren($element['#item'])) {
           if (is_null($menu_link) || (isset($menu_link) && $menu_link != $element['#item']->link->getPluginId())) {
             $uri = Url::fromRoute('bigmenu.menu_link', array(
               'menu' => $this->entity->id(),

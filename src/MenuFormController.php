@@ -214,7 +214,7 @@ class MenuFormController extends DefaultMenuFormController {
 
         $mlid = (int)$links[$id]['#item']->link->getMetaData()['entity_id'];
 
-        if ($form['links'][$id]['#item']->hasChildren) {
+        if ($form['links'][$id]['#item']->hasChildren || $this->menuLinkHasChildren($links[$id]['#item'])) {
           if (is_null($menu_link) || (isset($menu_link) && $menu_link->id() != $mlid)) {
             $form['links'][$id]['title'][] = array(
               '#type' => 'big_menu_button',
@@ -246,6 +246,24 @@ class MenuFormController extends DefaultMenuFormController {
         }
       }
     }
+  }
+
+  /**
+   * Check if the Element has any children, enabled and disabled.
+   *
+   * @param \Drupal\Core\Menu\MenuLinkTreeElement $element
+   *   The parent element.
+   *
+   * @return bool
+   */
+  protected function menuLinkHasChildren(MenuLinkTreeElement $element) {
+    $depth = $element->depth + 1;
+    $tree_params = new MenuTreeParameters();
+    $tree_params->setMinDepth($depth);
+    $tree_params->setMaxDepth($depth);
+    $tree_params->addExpandedParents([$element->link->getPluginId()]);
+    $tree = $this->menuTree->load($this->entity->id(), $tree_params);
+    return !empty($tree);
   }
 
   /**
