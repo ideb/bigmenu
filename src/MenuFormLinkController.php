@@ -55,6 +55,7 @@ class MenuFormLinkController extends MenuFormController {
 
     $form['links']['#header'] = array(
       $this->t('Menu link'),
+      $this->t('Particularities'),
       $this->t('Edit children'),
       array(
         'data' => $this->t('Enabled'),
@@ -102,6 +103,19 @@ class MenuFormLinkController extends MenuFormController {
           ),
           $element['title'],
         );
+
+        $form['links'][$id]['particularities'] = [];
+        $route_name = $element['#item']->link->getRouteName();
+        if ($route_name === 'entity.node.canonical') {
+          $route_parameters = $element['#item']->link->getRouteParameters();
+          /** @var \Drupal\node\NodeInterface $node */
+          $node = $this->entityTypeManager->getStorage('node')->load($route_parameters['node']);
+          if (!$node->isPublished()) {
+            $form['links'][$id]['particularities']['unpublished'] = [
+              '#markup' => $this->t('Target page is unpublished.'),
+            ];
+          }
+        }
 
         $form['links'][$id]['root'][] = array();
 
