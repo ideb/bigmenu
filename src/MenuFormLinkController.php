@@ -110,7 +110,12 @@ class MenuFormLinkController extends MenuFormController {
           $route_parameters = $element['#item']->link->getRouteParameters();
           /** @var \Drupal\node\NodeInterface $node */
           $node = $this->entityTypeManager->getStorage('node')->load($route_parameters['node']);
-          if (!$node->isPublished()) {
+          if (!$node) {
+            $form['links'][$id]['particularities']['unpublished'] = [
+              '#markup' => $this->t('Target page does not exist.'),
+            ];
+          }
+          elseif (!$node->isPublished()) {
             $form['links'][$id]['particularities']['unpublished'] = [
               '#markup' => $this->t('Target page is unpublished.'),
             ];
